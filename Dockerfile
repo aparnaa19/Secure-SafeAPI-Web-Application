@@ -1,20 +1,20 @@
-# ✅ Use lightweight Node.js base image
+# Use lightweight Node.js base image
 FROM node:18-alpine
 
-# ✅ Set working directory inside container
+# Set working directory inside container
 WORKDIR /app
 
-# ✅ Copy package files first (for efficient caching)
+# Copy package files first (for efficient caching)
 COPY package*.json ./
 
-# ✅ Install only production dependencies
+# Install only production dependencies
 RUN npm install --production
 
-# ✅ Copy the rest of the application files
+# Copy the rest of the application files
 COPY . .
 
-# ✅ Expose port 3000
+# Expose port 3000
 EXPOSE 3000
 
-# ✅ Start the server
+# Start the server
 CMD ["node", "server.js"]
