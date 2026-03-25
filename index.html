@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SafeAPI — Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0a0e17;
+      --panel: #0f1623;
+      --border: #1e2d45;
+      --accent: #00e5ff;
+      --accent2: #0077ff;
+      --text: #cdd9f0;
+      --muted: #4a6080;
+      --error: #ff4c6a;
+      --success: #00e5a0;
+      --mono: 'Share Tech Mono', monospace;
+      --sans: 'DM Sans', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* Animated grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0.4;
+      z-index: 0;
+    }
+
+    /* Glowing orb */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -200px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(0,119,255,0.12) 0%, transparent 70%);
+      z-index: 0;
+      animation: pulse 6s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.6; transform: translateX(-50%) scale(1); }
+      50% { opacity: 1; transform: translateX(-50%) scale(1.1); }
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 420px;
+      padding: 20px;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      border: 1.5px solid var(--accent);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 12px rgba(0,229,255,0.3);
+    }
+
+    .logo-icon svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--accent);
+    }
+
+    .logo-text {
+      font-family: var(--mono);
+      font-size: 22px;
+      color: #fff;
+      letter-spacing: 2px;
+    }
+
+    .logo-text span {
+      color: var(--accent);
+    }
+
+    .tagline {
+      font-size: 12px;
+      color: var(--muted);
+      font-family: var(--mono);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    /* Card */
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow:
+        0 0 0 1px rgba(0,229,255,0.03),
+        0 20px 60px rgba(0,0,0,0.4);
+    }
+
+    .card-title {
+      font-size: 13px;
+      font-family: var(--mono);
+      color: var(--muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-title::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 6px var(--accent);
+      animation: blink 2s ease infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* Form */
+    .field {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      font-size: 11px;
+      font-family: var(--mono);
+      color: var(--muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-wrap svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      stroke: var(--muted);
+      pointer-events: none;
+      transition: stroke 0.2s;
+    }
+
+    input {
+      width: 100%;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px 12px 42px;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input::placeholder { color: var(--muted); }
+
+    input:focus {
+      border-color: var(--accent2);
+      box-shadow: 0 0 0 3px rgba(0,119,255,0.12);
+    }
+
+    input:focus + svg,
+    .input-wrap:focus-within svg {
+      stroke: var(--accent);
+    }
+
+    /* Reversed icon order fix — icon is before input in DOM */
+    .input-wrap input { order: 2; }
+    .input-wrap svg { order: 1; }
+
+    /* Button */
+    button[type="submit"] {
+      width: 100%;
+      margin-top: 8px;
+      padding: 13px;
+      background: linear-gradient(135deg, var(--accent2), #0055cc);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-family: var(--mono);
+      font-size: 14px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    button[type="submit"]:hover { opacity: 0.9; }
+    button[type="submit"]:active { transform: scale(0.98); }
+
+    button[type="submit"]::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.12), transparent);
+      border-radius: inherit;
+    }
+
+    button[type="submit"]:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Message */
+    .message {
+      margin-top: 16px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.5px;
+      display: none;
+    }
+
+    .message.error {
+      display: block;
+      background: rgba(255,76,106,0.08);
+      border: 1px solid rgba(255,76,106,0.3);
+      color: var(--error);
+    }
+
+    .message.success {
+      display: block;
+      background: rgba(0,229,160,0.08);
+      border: 1px solid rgba(0,229,160,0.3);
+      color: var(--success);
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 11px;
+      font-family: var(--mono);
+      color: var(--muted);
+    }
+
+    .footer a {
+      color: var(--accent2);
+      text-decoration: none;
+    }
+
+    /* Security badge */
+    .security-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 24px;
+      font-size: 10px;
+      font-family: var(--mono);
+      color: var(--muted);
+      letter-spacing: 0.5px;
+    }
+
+    .security-badge svg {
+      width: 12px;
+      height: 12px;
+      stroke: var(--muted);
+    }
+
+    /* Loading spinner inside button */
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7z"/>
+        </svg>
+      </div>
+      <span class="logo-text">Safe<span>API</span></span>
+    </div>
+    <div class="tagline">Secure Web Application</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Authentication Required</div>
+
+    <form id="loginForm">
+      <div class="field">
+        <label for="email">Email Address</label>
+        <div class="input-wrap">
+          <input
+            type="email"
+            id="email"
+            placeholder="you@example.com"
+            required
+            autocomplete="email"
+          />
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="4" width="20" height="16" rx="2"/>
+            <path d="M2 7l10 7 10-7"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <div class="input-wrap">
+          <input
+            type="password"
+            id="password"
+            placeholder="••••••••"
+            required
+            autocomplete="current-password"
+          />
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2"/>
+            <path d="M7 11V7a5 5 0 0110 0v4"/>
+          </svg>
+        </div>
+      </div>
+
+      <button type="submit" id="loginBtn">Sign In</button>
+
+      <div class="message" id="message"></div>
+    </form>
+  </div>
+
+  <div class="security-badge">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
+      <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7z"/>
+    </svg>
+    Protected by Firebase Auth + reCAPTCHA App Check
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app-check.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCksCLSRzwvyqAU66bveHbtWmEaKycztzw",
+    authDomain: "safeapi-46696.firebaseapp.com",
+    projectId: "safeapi-46696",
+    storageBucket: "safeapi-46696.firebasestorage.app",
+    messagingSenderId: "452254762534",
+    appId: "1:452254762534:web:743a1776cf20e0fe62c8e7",
+    measurementId: "G-KT3MQWC9ST"
+  };
+
+  const app = initializeApp(firebaseConfig);
+
+  // ✅ Initialize App Check with reCAPTCHA Enterprise
+  const appCheck = initializeAppCheck(app, {
+    provider: new ReCaptchaEnterpriseProvider('6Lekp4wsAAAAAMPXLvEHcV1Y_MpYtgfOGoJ706EI'),
+    isTokenAutoRefreshEnabled: true
+  });
+
+  const auth = getAuth(app);
+
+  const form = document.getElementById('loginForm');
+  const btn = document.getElementById('loginBtn');
+  const msg = document.getElementById('message');
+
+  function showMessage(text, type) {
+    msg.textContent = text;
+    msg.className = 'message ' + type;
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Authenticating...';
+    msg.className = 'message';
+
+    try {
+      // ✅ Get App Check token and attach to request
+      const { getToken } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app-check.js");
+      const appCheckToken = await getToken(appCheck);
+      console.log('✅ App Check token obtained:', appCheckToken.token.substring(0, 20) + '...');
+
+      // ✅ Sign in with Firebase Auth (App Check token is sent automatically)
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      // Get the ID token and send to our backend
+const idToken = await user.getIdToken();
+const appCheckTokenResult = await getToken(appCheck);
+
+const response = await fetch('/api/login', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'X-Firebase-AppCheck': appCheckTokenResult.token
+  },
+  body: JSON.stringify({ idToken })
+});
+
+const data = await response.json();
+if (data.success) {
+  showMessage('✓ Login successful! Welcome, ' + user.email, 'success');
+} else {
+  showMessage('✗ Server rejected the request.', 'error');
+}
+      // TODO: redirect to dashboard after login
+      // window.location.href = '/dashboard.html';
+    } catch (error) {
+      let errorMsg = 'Login failed. Please try again.';
+      if (error.code === 'auth/invalid-credential') errorMsg = 'Invalid email or password.';
+      if (error.code === 'auth/user-not-found') errorMsg = 'No account found with this email.';
+      if (error.code === 'auth/wrong-password') errorMsg = 'Incorrect password.';
+      if (error.code === 'auth/too-many-requests') errorMsg = 'Too many attempts. Try again later.';
+      if (error.code === 'appCheck/fetch-status-error') errorMsg = 'App Check failed. Make sure you are on localhost.';
+
+      const email = document.getElementById('email').value.trim();
+      fetch('/api/login-failed', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, errorCode: error.code })
+      }).catch((err) => console.error('login-failed fetch error:', err));
+
+      showMessage('✗ ' + errorMsg, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = 'Sign In';
+    }
+  });
+</script>
+
+</body>
+</html>
