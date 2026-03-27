@@ -1,4 +1,4 @@
-# SafeAPI — Secure Web Application
+# SafeAPI - Secure Web Application
 
 A secure web application built with multiple layers of cybersecurity protection, deployed on Google Cloud Platform.
 
