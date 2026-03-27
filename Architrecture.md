@@ -8,71 +8,24 @@ SafeAPI is built using a **serverless, cloud-native architecture** on Google Clo
 
 ## System Architecture Diagram
 
-```
-                          ┌─────────────────────────────┐
-                          │         INTERNET              │
-                          │   (Users, Bots, Attackers)   │
-                          └──────────────┬───────────────┘
-                                         │
-                                         ▼
-                          ┌─────────────────────────────┐
-                          │       LOAD BALANCER          │
-                          │   (GCP External HTTP LB)    │
-                          │                              │
-                          │  • Routes incoming traffic   │
-                          │  • Terminates SSL/HTTPS      │
-                          │  • Forwards to backend       │
-                          └──────────────┬───────────────┘
-                                         │
-                                         ▼
-                          ┌─────────────────────────────┐
-                          │        CLOUD ARMOR           │
-                          │   (WAF + DDoS Protection)   │
-                          │                              │
-                          │  • Rate limiting rules       │
-                          │  • Bot detection             │
-                          │  • SQL injection blocking    │
-                          │  • XSS protection            │
-                          └──────────────┬───────────────┘
-                                         │
-                                         ▼
-                          ┌─────────────────────────────┐
-                          │  SERVERLESS NEG              │
-                          │  (Network Endpoint Group)   │
-                          │                              │
-                          │  Connects Load Balancer      │
-                          │  to Cloud Run service        │
-                          └──────────────┬───────────────┘
-                                         │
-                                         ▼
-                          ┌─────────────────────────────┐
-                          │        CLOUD RUN             │
-                          │   (Serverless Container)    │
-                          │                              │
-                          │  • Runs our Docker image     │
-                          │  • Auto-scales on demand     │
-                          │  • Managed HTTPS endpoint    │
-                          └──────────────┬───────────────┘
-                                         │
-                                         ▼
-                          ┌─────────────────────────────┐
-                          │      NODE.JS SERVER          │
-                          │   (Express.js Backend)      │
-                          │                              │
-                          │  • Serves index.html         │
-                          │  • Handles /api/login        │
-                          │  • Verifies App Check token  │
-                          │  • Verifies Firebase token   │
-                          │  • Logs security events      │
-                          └──────┬──────────────┬────────┘
-                                 │              │
-                    ┌────────────▼──┐    ┌──────▼──────────┐
-                    │   FIREBASE    │    │    FIRESTORE     │
-                    │               │    │                  │
-                    │ • Auth tokens │    │ • Security logs  │
-                    │ • App Check   │    │ • Event history  │
-                    │ • reCAPTCHA   │    │ • Blocked IPs    │
-                    └───────────────┘    └──────────────────┘
+```mermaid
+flowchart TD
+    A["INTERNET<br/>(Users, Bots, Attackers)"]
+    B["LOAD BALANCER<br/>(GCP External HTTP LB)<br/><br/>• Routes incoming traffic<br/>• Terminates SSL/HTTPS<br/>• Forwards to backend"]
+    C["CLOUD ARMOR<br/>(WAF + DDoS Protection)<br/><br/>• Rate limiting rules<br/>• Bot detection<br/>• SQL injection blocking<br/>• XSS protection"]
+    D["SERVERLESS NEG<br/>(Network Endpoint Group)<br/><br/>Connects Load Balancer to Cloud Run service"]
+    E["CLOUD RUN<br/>(Serverless Container)<br/><br/>• Runs our Docker image<br/>• Auto-scales on demand<br/>• Managed HTTPS endpoint"]
+    F["NODE.JS SERVER<br/>(Express.js Backend)<br/><br/>• Serves index.html<br/>• Handles /api/login<br/>• Verifies App Check token<br/>• Verifies Firebase token<br/>• Logs security events"]
+    G["FIREBASE<br/><br/>• Auth tokens<br/>• App Check<br/>• reCAPTCHA"]
+    H["FIRESTORE<br/><br/>• Security logs<br/>• Event history<br/>• Blocked IPs"]
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> G
+    F --> H
 ```
 
 ---
