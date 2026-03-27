@@ -33,3 +33,31 @@ Firebase Auth · App Check · reCAPTCHA Enterprise · Node.js · Express · Fire
 | [SECURITY.md](security.md) | Each security layer, attacks prevented, how it works |
 | [DEPLOYMENT.md](deployment.md) | Full deployment guide with explanations |
 
+---
+
+
+## Output
+
+### Login page:
+
+<img src="assets/loginpage.png" alt="login page" width="700">
+
+### Valid credentials:
+
+<img src="assets/valid.png" alt="valid credentials" width="700">
+
+![valid creds](assets/v.png)
+
+### Invalid credentials:
+
+<img src="assets/invalid.png" alt="invalid credentials" width="700">
+
+![invalid creds](assets/iv.png)
+
+### Rate Limiting
+
+<img src="assets/ratelimit.png" alt="rate limiting" width="700">
+
+![ratelimit creds](assets/rl.png)
+
+
