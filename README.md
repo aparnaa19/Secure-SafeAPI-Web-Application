@@ -29,8 +29,7 @@ Firebase Auth · App Check · reCAPTCHA Enterprise · Node.js · Express · Fire
 
 | File | Contents |
 |------|---------|
-| [ARCHITECTURE.md](ARCHITECTURE.md) | System diagram, request flow, component details |
-| [SECURITY.md](SECURITY.md) | Each security layer, attacks prevented, how it works |
-| [DEPLOYMENT.md](DEPLOYMENT.md) | Full deployment guide with explanations |
-| [CONCEPTS.md](CONCEPTS.md) | JWT, Docker, Firebase, Cloud Run, reCAPTCHA explained simply |
+| [Architecture.md](Architecture.md) | System diagram, request flow, component details |
+| [SECURITY.md](security.md) | Each security layer, attacks prevented, how it works |
+| [DEPLOYMENT.md](deployment.md) | Full deployment guide with explanations |
 
